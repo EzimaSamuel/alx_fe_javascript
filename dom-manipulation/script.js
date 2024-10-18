@@ -58,13 +58,40 @@ function addQuote() {
         return;
     }
 
-    quotes.push({ text: quoteText, category: quoteCategory });
+    const newQuote = { text: quoteText, category: quoteCategory };
+    quotes.push(newQuote);
     localStorage.setItem('quotes', JSON.stringify(quotes));
     newQuoteText.value = '';
     newQuoteCategory.value = '';
     alert("Quote added successfully!");
+
+    // Send new quote to server
+    postQuoteToServer(newQuote);
+
     populateCategories();
     showRandomQuote();
+}
+
+// Function to send a new quote to the server
+async function postQuoteToServer(quote) {
+    try {
+        const response = await fetch(serverUrl, {
+            method: 'POST', // Use POST method to send data
+            headers: {
+                'Content-Type': 'application/json' // Set content type to application/json
+            },
+            body: JSON.stringify(quote) // Convert quote to JSON string
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const serverResponse = await response.json();
+        console.log("Quote posted to server:", serverResponse);
+    } catch (error) {
+        console.error("Error posting quote to server:", error);
+    }
 }
 
 function exportQuotes() {
