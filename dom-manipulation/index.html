@@ -10,20 +10,29 @@
 <body>
     <h1>Dynamic Quote Generator</h1>
 
-    <!-- Display section for quotes -->
+    <!-- Display random quote -->
     <div id="quoteDisplay"></div>
-
-    <!-- Button to generate a new random quote -->
     <button id="newQuote">Show New Quote</button>
 
-    <!-- Form to add a new quote -->
+    <!-- Category selector -->
+    <div>
+        <label for="categorySelect">Select Category: </label>
+        <select id="categorySelect"></select>
+    </div>
+
+    <!-- Add new quote form -->
     <div>
         <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
         <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
-        <button onclick="addQuote()">Add Quote</button>
+        <button id="addQuoteButton">Add Quote</button>
     </div>
 
-    <!-- Linking the JavaScript file -->
+    <!-- Export quotes button -->
+    <div>
+        <button id="exportQuotesButton">Export Quotes</button>
+    </div>
+
+    <!-- JavaScript -->
     <script src="script.js"></script>
 </body>
 
