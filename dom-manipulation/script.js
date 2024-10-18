@@ -19,7 +19,7 @@ const importFileInput = document.getElementById('importFile');
 const importQuotesButton = document.getElementById('importQuotesButton');
 
 // Initialize category dropdown
-function initializeCategories() {
+function populateCategories() {
     categoryFilter.innerHTML = '<option value="all">All Categories</option>'; // Clear existing options
     const categories = ["All Categories", ...new Set(quotes.map(q => q.category))];
     categories.forEach(category => {
@@ -76,7 +76,7 @@ function addQuote() {
     alert("Quote added successfully!");
 
     // Re-populate categories in the dropdown if new category is introduced
-    initializeCategories();
+    populateCategories();
 
     showRandomQuote();
 }
@@ -122,7 +122,7 @@ function importQuotes() {
 
             alert("Quotes imported successfully!");
 
-            initializeCategories();
+            populateCategories();
             showRandomQuote();
         } catch (error) {
             alert("Error reading file. Please upload a valid JSON file.");
@@ -134,7 +134,7 @@ function importQuotes() {
 
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
-    initializeCategories();
+    populateCategories();
 
     // Restore the last selected category from localStorage
     const lastSelectedCategory = localStorage.getItem('selectedCategory');
