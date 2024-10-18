@@ -1,4 +1,3 @@
-// Load quotes from LocalStorage or initialize with default quotes
 let quotes = JSON.parse(localStorage.getItem('quotes')) || [
     { text: "The best way to predict the future is to create it.", category: "Inspiration" },
     { text: "Life is what happens when you're busy making other plans.", category: "Life" },
@@ -7,7 +6,6 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
     { text: "Whether you think you can or you think you can't, you're right.", category: "Motivation" }
 ];
 
-// DOM Elements
 const quoteDisplay = document.getElementById('quoteDisplay');
 const newQuoteButton = document.getElementById('newQuote');
 const categoryFilter = document.getElementById('categoryFilter');
@@ -18,7 +16,9 @@ const exportQuotesButton = document.getElementById('exportQuotesButton');
 const importFileInput = document.getElementById('importFile');
 const importQuotesButton = document.getElementById('importQuotesButton');
 
-// Initialize category dropdown
+// Simulated server URL (using a mock API)
+const serverUrl = 'https://jsonplaceholder.typicode.com/posts'; // Replace with your own mock server if needed
+
 function populateCategories() {
     categoryFilter.innerHTML = '<option value="all">All Categories</option>'; // Clear existing options
     const categories = ["All Categories", ...new Set(quotes.map(q => q.category))];
@@ -30,11 +30,8 @@ function populateCategories() {
     });
 }
 
-// Show quotes based on the selected category
 function filterQuotes() {
     const selectedCategory = categoryFilter.value;
-
-    // Save the selected category to localStorage
     localStorage.setItem('selectedCategory', selectedCategory);
 
     const filteredQuotes = selectedCategory === 'all' ? quotes : quotes.filter(q => q.category.toLowerCase() === selectedCategory);
@@ -48,12 +45,10 @@ function filterQuotes() {
     quoteDisplay.innerHTML = `"${randomQuote.text}" - ${randomQuote.category}`;
 }
 
-// Function to display a random quote
 function showRandomQuote() {
     filterQuotes(); // Show a random quote from the filtered list
 }
 
-// Function to add a new quote
 function addQuote() {
     const quoteText = newQuoteText.value.trim();
     const quoteCategory = newQuoteCategory.value.trim();
@@ -63,39 +58,24 @@ function addQuote() {
         return;
     }
 
-    // Add new quote to quotes array
     quotes.push({ text: quoteText, category: quoteCategory });
-
-    // Update LocalStorage
     localStorage.setItem('quotes', JSON.stringify(quotes));
-
-    // Clear input fields
     newQuoteText.value = '';
     newQuoteCategory.value = '';
-
     alert("Quote added successfully!");
-
-    // Re-populate categories in the dropdown if new category is introduced
     populateCategories();
-
     showRandomQuote();
 }
 
-// Function to export quotes as a JSON file using application/json MIME type and Blob
 function exportQuotes() {
     const quotesToExport = JSON.parse(localStorage.getItem('quotes')) || quotes;
-
-    // Create a Blob from the quotes in JSON format
     const blob = new Blob([JSON.stringify(quotesToExport, null, 2)], { type: 'application/json' });
-
-    // Create a link to download the Blob as a file
     const link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob);
     link.download = 'quotes.json';
     link.click();
 }
 
-// Function to import quotes from a JSON file
 function importQuotes() {
     const file = importFileInput.files[0];
 
@@ -105,43 +85,76 @@ function importQuotes() {
     }
 
     const reader = new FileReader();
-
     reader.onload = function(e) {
         try {
             const importedQuotes = JSON.parse(e.target.result);
-
             if (!Array.isArray(importedQuotes) || !importedQuotes.every(quote => quote.text && quote.category)) {
                 alert("Invalid file format. Ensure it contains an array of quotes with text and category.");
                 return;
             }
-
             quotes = quotes.concat(importedQuotes);
-
-            // Update LocalStorage
             localStorage.setItem('quotes', JSON.stringify(quotes));
-
             alert("Quotes imported successfully!");
-
             populateCategories();
             showRandomQuote();
         } catch (error) {
             alert("Error reading file. Please upload a valid JSON file.");
         }
     };
-
     reader.readAsText(file);
 }
+
+// Simulate fetching data from server
+async function fetchQuotesFromServer() {
+    try {
+        const response = await fetch(serverUrl);
+        const serverQuotes = await response.json();
+
+        // Here, we are simulating server quotes with a random selection for demonstration
+        const newQuotes = serverQuotes.slice(0, 5).map(q => ({
+            text: q.title,
+            category: "Server"
+        }));
+
+        // Check for conflicts
+        resolveConflicts(newQuotes);
+    } catch (error) {
+        console.error("Error fetching quotes from server:", error);
+    }
+}
+
+// Resolve conflicts between local and server quotes
+function resolveConflicts(newQuotes) {
+    newQuotes.forEach(newQuote => {
+        const existingQuoteIndex = quotes.findIndex(q => q.text === newQuote.text);
+        if (existingQuoteIndex === -1) {
+            quotes.push(newQuote); // Add new quote if it doesn't exist locally
+        } else {
+            // Conflict: Ask user how to resolve
+            const userChoice = confirm(`Conflict detected for quote "${newQuote.text}". Do you want to keep the local version? Click "Cancel" to keep the server version.`);
+            if (!userChoice) {
+                // User chose to take the server version
+                quotes[existingQuoteIndex] = newQuote;
+            }
+        }
+    });
+
+    localStorage.setItem('quotes', JSON.stringify(quotes));
+    alert("Quotes synchronized with server!");
+    populateCategories();
+    showRandomQuote();
+}
+
+// Sync data with the server every 30 seconds
+setInterval(fetchQuotesFromServer, 30000);
 
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
     populateCategories();
-
-    // Restore the last selected category from localStorage
     const lastSelectedCategory = localStorage.getItem('selectedCategory');
     if (lastSelectedCategory) {
         categoryFilter.value = lastSelectedCategory;
     }
-
     filterQuotes();
 });
 
