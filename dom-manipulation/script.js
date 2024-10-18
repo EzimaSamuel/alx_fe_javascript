@@ -10,14 +10,13 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
 // DOM Elements
 const quoteDisplay = document.getElementById('quoteDisplay');
 const newQuoteButton = document.getElementById('newQuote');
-const categorySelect = document.getElementById('categorySelect');
-const addQuoteButton = document.getElementById('addQuoteButton');
+const categoryFilter = document.getElementById('categoryFilter');
 const newQuoteText = document.getElementById('newQuoteText');
 const newQuoteCategory = document.getElementById('newQuoteCategory');
+const addQuoteButton = document.getElementById('addQuoteButton');
 const exportQuotesButton = document.getElementById('exportQuotesButton');
 const importFileInput = document.getElementById('importFile');
 const importQuotesButton = document.getElementById('importQuotesButton');
-const categoryFilter = document.getElementById('categoryFilter');
 
 // Initialize category dropdown
 function initializeCategories() {
@@ -97,7 +96,7 @@ function exportQuotes() {
 }
 
 // Function to import quotes from a JSON file
-function importQuotes(event) {
+function importQuotes() {
     const file = importFileInput.files[0];
 
     if (!file) {
@@ -145,6 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     filterQuotes();
 });
+
 newQuoteButton.addEventListener('click', showRandomQuote);
 addQuoteButton.addEventListener('click', addQuote);
 exportQuotesButton.addEventListener('click', exportQuotes);
