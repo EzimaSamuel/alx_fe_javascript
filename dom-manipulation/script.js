@@ -1,7 +1,5 @@
-// script.js
-
-// Initial array of quotes
-let quotes = [
+// Load quotes from LocalStorage or initialize with default quotes
+let quotes = JSON.parse(localStorage.getItem('quotes')) || [
     { text: "The best way to predict the future is to create it.", category: "Inspiration" },
     { text: "Life is what happens when you're busy making other plans.", category: "Life" },
     { text: "Get busy living or get busy dying.", category: "Motivation" },
@@ -47,7 +45,10 @@ function showRandomQuote() {
 
     const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
     const randomQuote = filteredQuotes[randomIndex];
-    quoteDisplay.textContent = `"${randomQuote.text}" - ${randomQuote.category}`;
+
+    quoteDisplay.innerHTML = `"${randomQuote.text}" - ${randomQuote.category} <button id="removeQuote">Remove</button>`;
+
+    document.getElementById('removeQuote').addEventListener('click', () => removeQuote(randomQuote));
 }
 
 // Function to add a new quote
@@ -69,6 +70,9 @@ function addQuote() {
         initializeCategories();
     }
 
+    // Update LocalStorage
+    localStorage.setItem('quotes', JSON.stringify(quotes));
+
     // Clear input fields
     newQuoteText.value = '';
     newQuoteCategory.value = '';
@@ -76,6 +80,23 @@ function addQuote() {
     alert("Quote added successfully!");
 
     // Optionally, display the new quote
+    showRandomQuote();
+}
+
+// Function to remove a quote
+function removeQuote(quoteToRemove) {
+    quotes = quotes.filter(q => q !== quoteToRemove);
+
+    // Update categories
+    categories = ["All Categories", ...new Set(quotes.map(q => q.category))];
+
+    // Update LocalStorage
+    localStorage.setItem('quotes', JSON.stringify(quotes));
+
+    initializeCategories();
+
+    alert("Quote removed successfully!");
+
     showRandomQuote();
 }
 
