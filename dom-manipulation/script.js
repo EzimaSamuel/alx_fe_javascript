@@ -172,7 +172,7 @@ function resolveConflicts(newQuotes) {
     });
 
     localStorage.setItem('quotes', JSON.stringify(quotes));
-    alert("Quotes synchronized with server!"); // Updated message
+    alert("Quotes synced with server!"); // Required phrase
     populateCategories();
     showRandomQuote();
 }
