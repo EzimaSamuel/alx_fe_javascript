@@ -1,0 +1,35 @@
+# Ignore system files and directories
+/.bash_history
+/.gitconfig
+/.gk/
+/.idea/
+/.p2/
+/.vscode/
+/3D Objects/
+/AppData/
+/Contacts/
+/Documents/
+/Downloads/
+/Favorites/
+/Music/
+/OneDrive/
+/Pictures/
+/Saved Games/
+/Searches/
+/Videos/
+/desktop.ini
+/NTUSER.DAT*
+
+# Ignore executables
+*.exe
+
+# Ignore project-specific non-relevant files
+/VSCodeUserSetup-x64-*.exe
+/*.lnk
+
+# Ignore node-related folders (if applicable)
+node_modules/
+
+# Ignore Eclipse-related folders (if applicable)
+/eclipse-workspace/
+/eclipse/
