@@ -15,6 +15,8 @@ const addQuoteButton = document.getElementById('addQuoteButton');
 const newQuoteText = document.getElementById('newQuoteText');
 const newQuoteCategory = document.getElementById('newQuoteCategory');
 const exportQuotesButton = document.getElementById('exportQuotesButton');
+const importFileInput = document.getElementById('importFile');
+const importQuotesButton = document.getElementById('importQuotesButton');
 
 // Initialize category dropdown
 function initializeCategories() {
@@ -66,7 +68,6 @@ function addQuote() {
 
     alert("Quote added successfully!");
 
-    // Optionally, display the new quote
     showRandomQuote();
 }
 
@@ -96,8 +97,52 @@ function exportQuotes() {
     link.click();
 }
 
+// Function to import quotes from a JSON file
+function importQuotes(event) {
+    const file = importFileInput.files[0];
+
+    if (!file) {
+        alert("Please select a file to import.");
+        return;
+    }
+
+    const reader = new FileReader();
+
+    // Define what happens when file is loaded
+    reader.onload = function(e) {
+        try {
+            // Parse the JSON content from the file
+            const importedQuotes = JSON.parse(e.target.result);
+
+            // Ensure the imported data is a valid array of quotes
+            if (!Array.isArray(importedQuotes) || !importedQuotes.every(quote => quote.text && quote.category)) {
+                alert("Invalid file format. Ensure it contains an array of quotes with 'text' and 'category' fields.");
+                return;
+            }
+
+            // Merge imported quotes with the existing quotes
+            quotes = quotes.concat(importedQuotes);
+
+            // Update LocalStorage
+            localStorage.setItem('quotes', JSON.stringify(quotes));
+
+            alert("Quotes imported successfully!");
+
+            // Re-initialize categories and show a random quote
+            initializeCategories();
+            showRandomQuote();
+        } catch (error) {
+            alert("Error reading file. Please upload a valid JSON file.");
+        }
+    };
+
+    // Read the file content as text
+    reader.readAsText(file);
+}
+
 // Event listeners
 document.addEventListener('DOMContentLoaded', initializeCategories);
 newQuoteButton.addEventListener('click', showRandomQuote);
 addQuoteButton.addEventListener('click', addQuote);
 exportQuotesButton.addEventListener('click', exportQuotes);
+importQuotesButton.addEventListener('click', importQuotes);
