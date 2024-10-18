@@ -131,6 +131,11 @@ function importQuotes() {
     reader.readAsText(file);
 }
 
+// Sync quotes with the server
+async function syncQuotes() {
+    await fetchQuotesFromServer();
+}
+
 // Simulate fetching data from server
 async function fetchQuotesFromServer() {
     try {
@@ -173,7 +178,7 @@ function resolveConflicts(newQuotes) {
 }
 
 // Sync data with the server every 30 seconds
-setInterval(fetchQuotesFromServer, 30000);
+setInterval(syncQuotes, 30000);
 
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
